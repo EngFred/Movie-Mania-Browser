@@ -1,7 +1,7 @@
-import 'package:my_movie_box/features/popular_movies/data/models/api_response.dart';
+import 'package:my_movie_box/features/popular_movies/data/models/popular_movies_response.dart';
 import 'package:my_movie_box/features/popular_movies/domain/entities/movie.dart';
 
-class MovieMapper {
+class PopularMoviesMapper {
   static Movie toDomain(MovieDto movieDto) {
     return Movie(
       id: movieDto.id,
@@ -12,7 +12,7 @@ class MovieMapper {
     );
   }
 
-  static List<Movie> toMovieList(List<MovieDto> dtoList) {
+  static List<Movie> toPopularMoviesList(List<MovieDto> dtoList) {
     return dtoList.map((dto) => toDomain(dto)).toList();
   }
 }
