@@ -48,6 +48,9 @@ MovieDetailsResponse _$MovieDetailsResponseFromJson(
       video: json['video'] as bool?,
       voteAverage: (json['vote_average'] as num?)?.toDouble(),
       voteCount: (json['vote_count'] as num?)?.toInt(),
+      credits: json['credits'] == null
+          ? null
+          : CreditsDto.fromJson(json['credits'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MovieDetailsResponseToJson(
@@ -79,6 +82,7 @@ Map<String, dynamic> _$MovieDetailsResponseToJson(
       'video': instance.video,
       'vote_average': instance.voteAverage,
       'vote_count': instance.voteCount,
+      'credits': instance.credits,
     };
 
 BelongsToCollectionDto _$BelongsToCollectionDtoFromJson(
@@ -153,4 +157,77 @@ Map<String, dynamic> _$SpokenLanguageDtoToJson(SpokenLanguageDto instance) =>
       'english_name': instance.englishName,
       'iso_639_1': instance.iso6391,
       'name': instance.name,
+    };
+
+CreditsDto _$CreditsDtoFromJson(Map<String, dynamic> json) => CreditsDto(
+      cast: (json['cast'] as List<dynamic>?)
+          ?.map((e) => CastDto.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      crew: (json['crew'] as List<dynamic>?)
+          ?.map((e) => CrewDto.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$CreditsDtoToJson(CreditsDto instance) =>
+    <String, dynamic>{
+      'cast': instance.cast,
+      'crew': instance.crew,
+    };
+
+CrewDto _$CrewDtoFromJson(Map<String, dynamic> json) => CrewDto(
+      adult: json['adult'] as bool?,
+      gender: (json['gender'] as num?)?.toInt(),
+      id: (json['id'] as num).toInt(),
+      knownForDepartment: json['known_for_department'] as String?,
+      name: json['name'] as String?,
+      originalName: json['original_name'] as String?,
+      popularity: (json['popularity'] as num?)?.toDouble(),
+      profilePath: json['profile_path'] as String?,
+      creditId: json['credit_id'] as String?,
+      department: json['department'] as String?,
+      job: json['job'] as String?,
+    );
+
+Map<String, dynamic> _$CrewDtoToJson(CrewDto instance) => <String, dynamic>{
+      'adult': instance.adult,
+      'gender': instance.gender,
+      'id': instance.id,
+      'known_for_department': instance.knownForDepartment,
+      'name': instance.name,
+      'original_name': instance.originalName,
+      'popularity': instance.popularity,
+      'profile_path': instance.profilePath,
+      'credit_id': instance.creditId,
+      'department': instance.department,
+      'job': instance.job,
+    };
+
+CastDto _$CastDtoFromJson(Map<String, dynamic> json) => CastDto(
+      adult: json['adult'] as bool?,
+      gender: (json['gender'] as num?)?.toInt(),
+      id: (json['id'] as num).toInt(),
+      knownForDepartment: json['known_for_department'] as String?,
+      name: json['name'] as String?,
+      originalName: json['original_name'] as String?,
+      popularity: (json['popularity'] as num?)?.toDouble(),
+      profilePath: json['profile_path'] as String?,
+      castId: (json['cast_id'] as num?)?.toInt(),
+      character: json['character'] as String?,
+      creditId: json['credit_id'] as String?,
+      order: (json['order'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$CastDtoToJson(CastDto instance) => <String, dynamic>{
+      'adult': instance.adult,
+      'gender': instance.gender,
+      'id': instance.id,
+      'known_for_department': instance.knownForDepartment,
+      'name': instance.name,
+      'original_name': instance.originalName,
+      'popularity': instance.popularity,
+      'profile_path': instance.profilePath,
+      'cast_id': instance.castId,
+      'character': instance.character,
+      'credit_id': instance.creditId,
+      'order': instance.order,
     };

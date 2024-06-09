@@ -43,35 +43,36 @@ class MovieDetailsResponse {
   final double? voteAverage;
   @JsonKey(name: "vote_count")
   final int? voteCount;
+  final CreditsDto? credits;
 
-  MovieDetailsResponse({
-    this.adult,
-    this.backdropPath,
-    this.belongsToCollection,
-    this.budget,
-    this.genres,
-    this.homepage,
-    required this.id,
-    this.imdbId,
-    this.originCountry,
-    this.originalLanguage,
-    this.originalTitle,
-    this.overview,
-    this.popularity,
-    this.posterPath,
-    this.productionCompanies,
-    this.productionCountries,
-    this.releaseDate,
-    this.revenue,
-    this.runtime,
-    this.spokenLanguages,
-    this.status,
-    this.tagline,
-    this.title,
-    this.video,
-    this.voteAverage,
-    this.voteCount,
-  });
+  MovieDetailsResponse(
+      {this.adult,
+      this.backdropPath,
+      this.belongsToCollection,
+      this.budget,
+      this.genres,
+      this.homepage,
+      required this.id,
+      this.imdbId,
+      this.originCountry,
+      this.originalLanguage,
+      this.originalTitle,
+      this.overview,
+      this.popularity,
+      this.posterPath,
+      this.productionCompanies,
+      this.productionCountries,
+      this.releaseDate,
+      this.revenue,
+      this.runtime,
+      this.spokenLanguages,
+      this.status,
+      this.tagline,
+      this.title,
+      this.video,
+      this.voteAverage,
+      this.voteCount,
+      this.credits});
 
   factory MovieDetailsResponse.fromJson(Map<String, dynamic> json) =>
       _$MovieDetailsResponseFromJson(json);
@@ -168,4 +169,94 @@ class SpokenLanguageDto {
   factory SpokenLanguageDto.fromJson(Map<String, dynamic> json) =>
       _$SpokenLanguageDtoFromJson(json);
   Map<String, dynamic> toJson() => _$SpokenLanguageDtoToJson(this);
+}
+
+@JsonSerializable()
+class CreditsDto {
+  final List<CastDto>? cast;
+  final List<CrewDto>? crew;
+
+  CreditsDto({
+    this.cast,
+    this.crew,
+  });
+
+  factory CreditsDto.fromJson(Map<String, dynamic> json) =>
+      _$CreditsDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$CreditsDtoToJson(this);
+}
+
+@JsonSerializable()
+class CrewDto {
+  final bool? adult;
+  final int? gender;
+  final int id;
+  @JsonKey(name: "known_for_department")
+  final String? knownForDepartment;
+  final String? name;
+  @JsonKey(name: "original_name")
+  final String? originalName;
+  final double? popularity;
+  @JsonKey(name: "profile_path")
+  final String? profilePath;
+  @JsonKey(name: "credit_id")
+  final String? creditId;
+  final String? department;
+  final String? job;
+
+  CrewDto(
+      {this.adult,
+      this.gender,
+      required this.id,
+      this.knownForDepartment,
+      this.name,
+      this.originalName,
+      this.popularity,
+      this.profilePath,
+      this.creditId,
+      this.department,
+      this.job});
+
+  factory CrewDto.fromJson(Map<String, dynamic> json) =>
+      _$CrewDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$CrewDtoToJson(this);
+}
+
+@JsonSerializable()
+class CastDto {
+  final bool? adult;
+  final int? gender;
+  final int id;
+  @JsonKey(name: "known_for_department")
+  final String? knownForDepartment;
+  final String? name;
+  @JsonKey(name: "original_name")
+  final String? originalName;
+  final double? popularity;
+  @JsonKey(name: "profile_path")
+  final String? profilePath;
+  @JsonKey(name: "cast_id")
+  final int? castId;
+  final String? character;
+  @JsonKey(name: "credit_id")
+  final String? creditId;
+  final int? order;
+
+  CastDto(
+      {this.adult,
+      this.gender,
+      required this.id,
+      this.knownForDepartment,
+      this.name,
+      this.originalName,
+      this.popularity,
+      this.profilePath,
+      this.castId,
+      this.character,
+      this.creditId,
+      this.order});
+
+  factory CastDto.fromJson(Map<String, dynamic> json) =>
+      _$CastDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$CastDtoToJson(this);
 }

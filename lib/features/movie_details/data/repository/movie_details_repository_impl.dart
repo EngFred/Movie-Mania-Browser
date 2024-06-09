@@ -1,6 +1,6 @@
 import 'package:my_movie_box/features/movie_details/data/mapper/movie_details_mapper.dart';
 import 'package:my_movie_box/features/movie_details/data/sources/remote/movie_details_api_service.dart';
-import 'package:my_movie_box/features/movie_details/domain/entities/movie_details.dart';
+import 'package:my_movie_box/features/movie_details/domain/models/movie_details.dart';
 import 'package:my_movie_box/features/movie_details/domain/repository/move_details_repository.dart';
 
 class MovieDetailsRepositoryImpl extends MovieDetailsRepository {

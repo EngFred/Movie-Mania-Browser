@@ -19,8 +19,8 @@ final class _$MovieDetailsApiService extends MovieDetailsApiService {
 
   @override
   Future<MovieDetailsResponse> getMovieDetails(int movieId) async {
-    final Uri $url =
-        Uri.parse('movie/${movieId}?api_key=5d1b1d3b9651a62438cbed62d058ce41');
+    final Uri $url = Uri.parse(
+        'movie/${movieId}?api_key=5d1b1d3b9651a62438cbed62d058ce41&append_to_response=credits');
     final Request $request = Request(
       'GET',
       $url,

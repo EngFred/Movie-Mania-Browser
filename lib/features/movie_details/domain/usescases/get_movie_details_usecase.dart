@@ -1,8 +1,8 @@
 import 'package:my_movie_box/core/usecase/usecase.dart';
-import 'package:my_movie_box/features/movie_details/domain/entities/movie_details.dart';
+import 'package:my_movie_box/features/movie_details/domain/models/movie_details.dart';
 import 'package:my_movie_box/features/movie_details/domain/repository/move_details_repository.dart';
 
-class GetMovieDetailsUsecase extends Usecase<MovieDetails, int> {
+class GetMovieDetailsUsecase extends FutureBaseUsecase<MovieDetails, int> {
   final MovieDetailsRepository _movieDetailsRepository;
 
   GetMovieDetailsUsecase(
@@ -10,8 +10,8 @@ class GetMovieDetailsUsecase extends Usecase<MovieDetails, int> {
       : _movieDetailsRepository = movieDetailsRepository;
 
   @override
-  Future<MovieDetails> call({required int params}) async {
-    final movieDetails = await _movieDetailsRepository.getMovieDetails(params);
+  Future<MovieDetails> call({int? params}) async {
+    final movieDetails = await _movieDetailsRepository.getMovieDetails(params!);
     return movieDetails;
   }
 

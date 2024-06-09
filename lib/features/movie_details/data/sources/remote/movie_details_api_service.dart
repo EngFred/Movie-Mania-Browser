@@ -7,7 +7,7 @@ part 'movie_details_api_service.chopper.dart';
 
 @ChopperApi()
 abstract class MovieDetailsApiService extends ChopperService {
-  @Get(path: "movie/{movieId}?api_key=$apiKey")
+  @Get(path: "movie/{movieId}?api_key=$apiKey&append_to_response=credits")
   Future<MovieDetailsResponse> getMovieDetails(@Path("movieId") int movieId);
 
   static MovieDetailsApiService create() {
