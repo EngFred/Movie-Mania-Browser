@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -26,9 +27,24 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     _searchResultsPagingController.addPageRequestListener((pageKey) {
       _fetchSearchedMoviesPage(pageKey);
     });
+  }
+
+  @override
+  void dispose() {
+    _searchResultsPagingController.dispose();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    super.dispose();
   }
 
   @override
@@ -37,7 +53,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
       appBar: AppBar(
         centerTitle: false,
         title: Text("Search results: ${widget.searchQuery.trim()}",
-            style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 19)),
+            style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
       ),
       body: _buildSearchResultsListView(),
     );

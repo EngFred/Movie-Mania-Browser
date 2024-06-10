@@ -7,6 +7,8 @@ import 'package:logger/logger.dart';
 import 'package:my_movie_box/core/utils/utils.dart';
 import 'package:my_movie_box/features/movie_details/domain/models/movie_details.dart';
 import 'package:my_movie_box/features/movie_details/presentation/provider/providers.dart';
+import 'package:my_movie_box/features/movie_details/presentation/screens/image_view_page.dart';
+import 'package:my_movie_box/features/movie_trailer/presentation/pages/watch_movie_trailer_page.dart';
 import 'package:my_movie_box/features/movies_watchlist/domain/models/watchlist_movie.dart';
 import 'package:my_movie_box/features/movies_watchlist/presentation/providers/providers.dart';
 
@@ -83,7 +85,9 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
                       right: 30,
                       top: 212,
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          watchMovieTrailer(movieDetails.id);
+                        },
                         child: CircleAvatar(
                             radius: 28,
                             backgroundColor: Colors.black.withOpacity(0.5),
@@ -130,19 +134,29 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.38,
-                                child: CachedNetworkImage(
-                                  fit: BoxFit.cover,
-                                  imageUrl: getPosterUrl(
-                                      movieDetails.posterPath ?? ""),
-                                  errorWidget: (context, url, error) {
-                                    return const Center(
-                                      child: Icon(Icons.error),
-                                    );
+                                child: InkWell(
+                                  onTap: () {
+                                    if (movieDetails.posterPath != null) {
+                                      showMoviePoster(movieDetails.posterPath!);
+                                    }
                                   },
+                                  child: CachedNetworkImage(
+                                    fit: BoxFit.cover,
+                                    imageUrl: getPosterUrl(
+                                        movieDetails.posterPath ?? ""),
+                                    errorWidget: (context, url, error) {
+                                      return const Center(
+                                        child: Icon(Icons.error),
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
@@ -296,7 +310,7 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
             final person = casts[index];
-            return _buildCastCard(person);
+            return person.profilePath != null ? _buildCastCard(person) : null;
           },
           itemCount: casts.length,
           separatorBuilder: (context, index) => const SizedBox(
@@ -313,7 +327,7 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
             final person = crew[index];
-            return _buildCrewCard(person);
+            return person.profilePath != null ? _buildCrewCard(person) : null;
           },
           itemCount: crew.length,
           separatorBuilder: (context, index) => const SizedBox(
@@ -424,6 +438,12 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
     }));
   }
 
+  void watchMovieTrailer(int movieId) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+      return WatchMovieTrailerPage(movieId);
+    }));
+  }
+
   void addMovieToWatchlist(
       {required int id,
       String? posterPath,
@@ -459,5 +479,11 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
     }
 
     Logger().d("DONE!");
+  }
+
+  void showMoviePoster(String posterPath) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+      return ImageViewPage(imagePath: posterPath);
+    }));
   }
 }

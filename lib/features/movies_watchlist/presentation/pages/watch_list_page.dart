@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:my_movie_box/core/utils/utils.dart';
@@ -16,6 +17,25 @@ class WatchListPage extends ConsumerStatefulWidget {
 }
 
 class _WatchListPageState extends ConsumerState<WatchListPage> {
+  @override
+  void initState() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,9 +130,7 @@ class _WatchListPageState extends ConsumerState<WatchListPage> {
                         ),
                         const Expanded(child: SizedBox()),
                         OutlinedButton(
-                          onPressed: () {
-                            removeMovieFromWatchlist(movie.id);
-                          },
+                          onPressed: () => removeMovie(movie, context),
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(
                                 color: Colors.red), // Set border color
@@ -150,5 +168,38 @@ class _WatchListPageState extends ConsumerState<WatchListPage> {
     } catch (e) {
       Logger().d("WOOOOOWE $e");
     }
+  }
+
+  void removeMovie(WatchlistMovie movie, BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Remove Movie'),
+            content: Text(
+                'Are you sure you want to remove the movie "${movie.title}" from your watchlist?'),
+            actions: <Widget>[
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.green, // Background color
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('No'),
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.red, // Background color
+                ),
+                onPressed: () {
+                  removeMovieFromWatchlist(movie.id);
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Yes'),
+              ),
+            ],
+          );
+        });
   }
 }

@@ -15,6 +15,11 @@ String getPosterUrl(String posterPath) {
   return posterUrl;
 }
 
+String getOriginalPosterUrl(String posterPath) {
+  String posterUrl = "https://image.tmdb.org/t/p/original/$posterPath";
+  return posterUrl;
+}
+
 String formatRuntime(int runtimeInMinutes) {
   final hours = runtimeInMinutes ~/ 60; // Integer division to get the hours
   final minutes = runtimeInMinutes % 60; // Modulo to get the remaining minutes

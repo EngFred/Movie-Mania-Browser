@@ -1,6 +1,7 @@
 import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:logger/logger.dart';
@@ -27,6 +28,9 @@ class _PopularMoviesPageState extends ConsumerState<MoviesPage> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     _popularMoviesPagingController.addPageRequestListener((pageKey) {
       _fetchPopularMoviesPage(pageKey);
     });
@@ -55,6 +59,12 @@ class _PopularMoviesPageState extends ConsumerState<MoviesPage> {
   @override
   void dispose() {
     _popularMoviesPagingController.dispose();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     super.dispose();
   }
 
