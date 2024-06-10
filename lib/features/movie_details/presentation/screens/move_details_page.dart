@@ -4,6 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:logger/logger.dart';
+import 'package:my_movie_box/core/constants/constants.dart';
 import 'package:my_movie_box/core/utils/utils.dart';
 import 'package:my_movie_box/features/movie_details/domain/models/movie_details.dart';
 import 'package:my_movie_box/features/movie_details/presentation/provider/providers.dart';
@@ -25,6 +26,7 @@ class MovieDetailsPage extends ConsumerStatefulWidget {
 
 class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
   final Logger log = Logger();
+  // bool castsAvailable = false;
   bool? isBookmarked;
 
   @override
@@ -41,6 +43,9 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallPhone = screenWidth >= 320 && screenWidth < 500;
+    bool isNormalPhone = screenWidth >= 500 && screenWidth < 640;
     return Scaffold(
         body: Container(
       child: ref.watch(getMovieDetailsProvider(widget.movieId)).when(
@@ -56,7 +61,11 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
           child: Column(
             children: [
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.5,
+                height: isSmallPhone
+                    ? 290
+                    : isNormalPhone
+                        ? 420
+                        : 540,
                 child: Stack(
                   children: [
                     Positioned(
@@ -64,11 +73,16 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
                       left: 0,
                       right: 0,
                       child: CachedNetworkImage(
+                        height: isSmallPhone
+                            ? 150
+                            : isNormalPhone
+                                ? 250
+                                : 350,
                         fit: BoxFit.cover,
                         imageUrl: getPosterUrl(movieDetails.backdropPath ?? ""),
                         errorWidget: (context, url, error) {
                           return Container(
-                            height: MediaQuery.of(context).size.height * 0.34,
+                            height: 250,
                             color: const Color.fromARGB(255, 75, 75, 75),
                             padding: const EdgeInsets.only(top: 0),
                             child: const Center(
@@ -82,20 +96,26 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
                       ),
                     ),
                     Positioned(
-                      right: 30,
-                      top: 212,
-                      child: InkWell(
-                        onTap: () {
-                          watchMovieTrailer(movieDetails.id);
-                        },
-                        child: CircleAvatar(
-                            radius: 28,
-                            backgroundColor: Colors.black.withOpacity(0.5),
-                            child: const FaIcon(FontAwesomeIcons.play)),
-                      ),
+                      right: isSmallPhone ? 15 : 30,
+                      top: isSmallPhone
+                          ? 90
+                          : isNormalPhone
+                              ? 180
+                              : 260,
+                      child: CircleAvatar(
+                          radius: isSmallPhone ? 20 : 28,
+                          backgroundColor: Colors.black.withOpacity(0.5),
+                          child: IconButton(
+                              onPressed: () {
+                                watchMovieTrailer(movieDetails.id);
+                              },
+                              icon: FaIcon(
+                                FontAwesomeIcons.play,
+                                size: isSmallPhone ? 15 : 24,
+                              ))),
                     ),
                     Positioned(
-                        right: 30,
+                        right: isSmallPhone ? 15 : 30,
                         top: 20,
                         child: isBookmarked != null
                             ? IconButton(
@@ -122,13 +142,13 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
                                   isBookmarked!
                                       ? Icons.bookmark
                                       : Icons.bookmark_outline,
-                                  size: 35,
+                                  size: isSmallPhone ? 28 : 35,
                                   color: Colors.green,
                                 ))
                             : const SizedBox()),
                     Positioned(
                       bottom: 0,
-                      left: 14,
+                      left: isSmallPhone ? 5 : 14,
                       right: 0,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -140,7 +160,11 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
                               child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.38,
+                                width: isSmallPhone
+                                    ? 120
+                                    : isNormalPhone
+                                        ? 170
+                                        : 210,
                                 child: InkWell(
                                   onTap: () {
                                     if (movieDetails.posterPath != null) {
@@ -161,13 +185,12 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            width: 10,
-                          ),
                           Expanded(
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 30, left: 10),
+                              padding: EdgeInsets.only(
+                                  bottom: 10,
+                                  left: isSmallPhone ? 10 : 5,
+                                  right: 10),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -178,14 +201,16 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 20),
+                                        fontSize: 18),
                                   ),
-                                  Text(movieDetails.genres != null &&
-                                          movieDetails.genres!.isNotEmpty
-                                      ? movieDetails.genres!
-                                          .map((genre) => genre.name)
-                                          .join(" | ")
-                                      : "-"),
+                                  Text(
+                                      maxLines: isSmallPhone ? 1 : 2,
+                                      movieDetails.genres != null &&
+                                              movieDetails.genres!.isNotEmpty
+                                          ? movieDetails.genres!
+                                              .map((genre) => genre.name)
+                                              .join(" | ")
+                                          : "-"),
                                   Row(
                                     children: [
                                       RatingBar.builder(
@@ -199,7 +224,11 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
                                         direction: Axis.horizontal,
                                         allowHalfRating: true,
                                         itemCount: 5,
-                                        itemSize: 25,
+                                        itemSize: isSmallPhone
+                                            ? 17
+                                            : isNormalPhone
+                                                ? 25
+                                                : 33,
                                         itemBuilder: (context, _) => const Icon(
                                           Icons.star,
                                           color: Colors.amber,
@@ -213,7 +242,8 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
                                             ? formatRuntime(
                                                 movieDetails.runtime!)
                                             : "---",
-                                        style: const TextStyle(fontSize: 15.5),
+                                        style: TextStyle(
+                                            fontSize: isSmallPhone ? 10 : 15.5),
                                       )
                                     ],
                                   )
@@ -256,16 +286,17 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 16, bottom: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, bottom: 10),
                     child: Text(
-                      "Top Casts",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      castsAvailable ? "Top Casts" : "",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                   ),
                   castsAvailable
-                      ? _buildCastsList(movieDetails.credits!.cast!)
+                      ? _buildCastsList(movieDetails.credits!.cast!,
+                          isSmallPhone, isNormalPhone)
                       : const SizedBox()
                 ],
               ),
@@ -282,7 +313,8 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
                     ),
                   ),
                   crewAvailable
-                      ? _buildCrewList(movieDetails.credits!.crew!)
+                      ? _buildCrewList(movieDetails.credits!.crew!,
+                          isSmallPhone, isNormalPhone)
                       : const SizedBox()
                 ],
               )
@@ -291,7 +323,7 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
         );
       }, error: (errMsg, stackTrace) {
         return ErrorIndicator(
-          errMsg: "$errMsg",
+          errMsg: errorMsg,
           onRetry: () {
             ref.refresh(getMovieDetailsProvider(widget.movieId)).isRefreshing;
           },
@@ -302,15 +334,20 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
     ));
   }
 
-  Widget _buildCastsList(List<Cast> casts) {
+  Widget _buildCastsList(
+      List<Cast> casts, bool isSmallPhone, bool isSemiMediumPhone) {
     return Container(
-        height: 300,
+        height: isSmallPhone
+            ? 240
+            : isSemiMediumPhone
+                ? 274
+                : 280,
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
             final person = casts[index];
-            return person.profilePath != null ? _buildCastCard(person) : null;
+            return _buildCastCard(person, isSmallPhone);
           },
           itemCount: casts.length,
           separatorBuilder: (context, index) => const SizedBox(
@@ -319,15 +356,20 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
         ));
   }
 
-  Widget _buildCrewList(List<Crew> crew) {
+  Widget _buildCrewList(
+      List<Crew> crew, bool isSmallPhone, bool isSemiMediumPhone) {
     return Container(
-        height: 300,
+        height: isSmallPhone
+            ? 240
+            : isSemiMediumPhone
+                ? 274
+                : 280,
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
             final person = crew[index];
-            return person.profilePath != null ? _buildCrewCard(person) : null;
+            return _buildCrewCard(person, isSmallPhone);
           },
           itemCount: crew.length,
           separatorBuilder: (context, index) => const SizedBox(
@@ -336,9 +378,9 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
         ));
   }
 
-  Widget _buildCastCard(Cast person) {
+  Widget _buildCastCard(Cast person, bool isSmallPhone) {
     return SizedBox(
-      width: 190,
+      width: isSmallPhone ? 145 : 190,
       child: Card(
           child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -346,10 +388,13 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CachedNetworkImage(
-              height: 170,
+              height: isSmallPhone ? 135 : 170,
               width: double.infinity,
               fit: BoxFit.fill,
-              imageUrl: getPosterUrl(person.profilePath ?? ""),
+              imageUrl:
+                  person.profilePath != null && person.profilePath!.isNotEmpty
+                      ? getPosterUrl(person.profilePath!)
+                      : defaultProfileImageUrl,
               errorWidget: (context, url, error) {
                 return const Center(
                   child: Icon(Icons.error),
@@ -383,9 +428,9 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
     );
   }
 
-  Widget _buildCrewCard(Crew person) {
+  Widget _buildCrewCard(Crew person, bool isSmallPhone) {
     return SizedBox(
-      width: 190,
+      width: isSmallPhone ? 145 : 190,
       child: Card(
           child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -393,10 +438,13 @@ class _MovieDetailsPageState extends ConsumerState<MovieDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CachedNetworkImage(
-              height: 170,
+              height: isSmallPhone ? 135 : 170,
               width: double.infinity,
               fit: BoxFit.fill,
-              imageUrl: getPosterUrl(person.profilePath ?? ""),
+              imageUrl:
+                  person.profilePath != null && person.profilePath!.isNotEmpty
+                      ? getPosterUrl(person.profilePath!)
+                      : defaultProfileImageUrl,
               errorWidget: (context, url, error) {
                 return const Center(
                   child: Icon(Icons.error),

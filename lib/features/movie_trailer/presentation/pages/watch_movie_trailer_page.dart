@@ -74,7 +74,7 @@ class _WatchMovieTrailerPageState extends ConsumerState<WatchMovieTrailerPage> {
           ),
         );
       }, error: (err, stk) {
-        return ErrorIndicator(errMsg: err.toString(), onRetry: () {});
+        return ErrorIndicator(errMsg: errorMsg, onRetry: () {});
       }, loading: () {
         return const LoadingIndicator();
       }),

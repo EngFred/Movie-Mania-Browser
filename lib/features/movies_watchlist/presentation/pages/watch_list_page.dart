@@ -38,6 +38,9 @@ class _WatchListPageState extends ConsumerState<WatchListPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallPhone = screenWidth >= 320 && screenWidth < 500;
+    bool isNormalPhone = screenWidth >= 500 && screenWidth < 640;
     return Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -57,7 +60,7 @@ class _WatchListPageState extends ConsumerState<WatchListPage> {
               ),
             ));
           }
-          return _buildWatchlistMoviesList(movies);
+          return _buildWatchlistMoviesList(movies, isSmallPhone, isNormalPhone);
         }, error: (err, st) {
           return ErrorWidget(err);
         }, loading: () {
@@ -65,7 +68,8 @@ class _WatchListPageState extends ConsumerState<WatchListPage> {
         }));
   }
 
-  Widget _buildWatchlistMoviesList(List<WatchlistMovie> movies) {
+  Widget _buildWatchlistMoviesList(
+      List<WatchlistMovie> movies, bool isSmallPhone, bool isNormalPhone) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListView.builder(
@@ -74,13 +78,15 @@ class _WatchListPageState extends ConsumerState<WatchListPage> {
           scrollDirection: Axis.vertical,
           itemBuilder: (context, index) {
             final movie = movies[index];
-            return _buildWatchlistMovieCard(movie);
+            return _buildWatchlistMovieCard(movie, isSmallPhone, isNormalPhone);
           }),
     );
   }
 
-  Widget _buildWatchlistMovieCard(WatchlistMovie movie) {
-    return Padding(
+  Widget _buildWatchlistMovieCard(
+      WatchlistMovie movie, bool isSmallPhone, bool isNormalPhone) {
+    return Container(
+      height: isSmallPhone ? 200 : 260,
       padding: const EdgeInsets.all(6),
       child: InkWell(
         onTap: () => showMovieDetail(movie.id),
@@ -92,7 +98,6 @@ class _WatchListPageState extends ConsumerState<WatchListPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 260,
                   width: MediaQuery.of(context).size.width * 0.4,
                   child: CachedNetworkImage(
                     fit: BoxFit.cover,
@@ -113,10 +118,11 @@ class _WatchListPageState extends ConsumerState<WatchListPage> {
                         Text(
                           combineTitleWithReleaseYear(
                               movie.title, movie.releaseDate),
-                          maxLines: 3,
+                          maxLines: isSmallPhone ? 2 : 3,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: isSmallPhone ? 14 : 18),
                         ),
                         const SizedBox(
                           height: 5,
@@ -125,8 +131,9 @@ class _WatchListPageState extends ConsumerState<WatchListPage> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           movie.tagline ?? "",
-                          style: const TextStyle(
-                              fontSize: 15, fontStyle: FontStyle.italic),
+                          style: TextStyle(
+                              fontSize: isSmallPhone ? 12 : 15,
+                              fontStyle: FontStyle.italic),
                         ),
                         const Expanded(child: SizedBox()),
                         OutlinedButton(

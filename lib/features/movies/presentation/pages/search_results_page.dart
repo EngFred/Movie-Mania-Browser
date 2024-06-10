@@ -5,7 +5,9 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:logger/logger.dart';
+import 'package:my_movie_box/core/constants/constants.dart';
 import 'package:my_movie_box/core/utils/utils.dart';
+import 'package:my_movie_box/core/widgets/error_indicator.dart';
 import 'package:my_movie_box/features/movie_details/presentation/screens/move_details_page.dart';
 import 'package:my_movie_box/features/movies/domain/models/movie.dart';
 import 'package:my_movie_box/features/movies/domain/models/movie_request_params.dart';
@@ -49,29 +51,30 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallPhone = screenWidth >= 320 && screenWidth < 500;
+    bool isNormalPhone = screenWidth >= 500 && screenWidth < 640;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
         title: Text("Search results: ${widget.searchQuery.trim()}",
             style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
       ),
-      body: _buildSearchResultsListView(),
+      body: _buildSearchResultsListView(isSmallPhone, isNormalPhone),
     );
   }
 
-  Widget _buildSearchResultsListView() {
+  Widget _buildSearchResultsListView(bool isSmallPhone, bool isNormalPhone) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: PagedListView.separated(
         pagingController: _searchResultsPagingController,
         builderDelegate: PagedChildBuilderDelegate<Movie>(
-          itemBuilder: (context, movie, index) => _buildMovieCard(movie),
-          firstPageErrorIndicatorBuilder: (context) => const Center(
-            child: Text(
-              'Error loading search results.',
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
+          itemBuilder: (context, movie, index) =>
+              _buildMovieCard(movie, isSmallPhone, isNormalPhone),
+          firstPageErrorIndicatorBuilder: (context) =>
+              ErrorIndicator(errMsg: errorMsg, onRetry: () {}),
           noItemsFoundIndicatorBuilder: (context) => const Center(
             child: Text('No search results found.'),
           ),
@@ -82,24 +85,25 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
     );
   }
 
-  Widget _buildMovieCard(Movie movie) {
+  Widget _buildMovieCard(Movie movie, bool isSmallPhone, bool isNormalPhone) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(30),
+      borderRadius: BorderRadius.circular(isSmallPhone ? 10 : 30),
       child: Card(
         child: SizedBox(
-          height: 222,
+          height: isSmallPhone ? 165 : 222,
           child: InkWell(
               onTap: () {
                 showMovieDetail(movie.id);
               },
               child: Padding(
-                padding: const EdgeInsets.all(13),
+                padding: EdgeInsets.all(isSmallPhone ? 8 : 13),
                 child: Row(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius:
+                          BorderRadius.circular(isSmallPhone ? 8 : 15),
                       child: CachedNetworkImage(
-                        width: 175,
+                        width: isSmallPhone ? 123 : 175,
                         fit: BoxFit.cover,
                         imageUrl: getPosterUrl(movie.posterPath ?? ""),
                         errorWidget: (context, url, error) {
@@ -125,9 +129,9 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
                                   movie.title ?? "-",
                                   maxLines: 2,
                                   overflow: TextOverflow.fade,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 18),
+                                      fontSize: isSmallPhone ? 16 : 18),
                                 ),
                               ),
                               const SizedBox(
@@ -136,8 +140,10 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
                               const Icon(Icons.more_vert)
                             ],
                           ),
-                          Text(getCountryName(
-                              movie.originalLanguage ?? "Unknown")),
+                          Text(
+                            getCountryName(movie.originalLanguage ?? "Unknown"),
+                            style: const TextStyle(fontSize: 14),
+                          ),
                           Text(
                             movie.releaseDate != null &&
                                     movie.releaseDate!.isNotEmpty
@@ -156,7 +162,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
                             direction: Axis.horizontal,
                             allowHalfRating: true,
                             itemCount: 5,
-                            itemSize: 25,
+                            itemSize: isSmallPhone ? 19 : 25,
                             itemBuilder: (context, _) => const Icon(
                               Icons.star,
                               color: Colors.amber,

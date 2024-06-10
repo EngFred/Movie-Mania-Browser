@@ -6,11 +6,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:logger/logger.dart';
 import 'package:my_movie_box/core/utils/utils.dart';
+import 'package:my_movie_box/core/widgets/error_indicator.dart';
 import 'package:my_movie_box/features/movie_details/presentation/screens/move_details_page.dart';
 import 'package:my_movie_box/features/movies/domain/models/movie.dart';
 import 'package:my_movie_box/features/movies/domain/models/movie_request_params.dart';
 import 'package:my_movie_box/features/movies/presentation/pages/search_results_page.dart';
 import 'package:my_movie_box/features/movies/presentation/provider/provider.dart';
+
+import '../../../../core/constants/constants.dart';
 
 class MoviesPage extends ConsumerStatefulWidget {
   const MoviesPage({super.key});
@@ -34,6 +37,13 @@ class _PopularMoviesPageState extends ConsumerState<MoviesPage> {
     _popularMoviesPagingController.addPageRequestListener((pageKey) {
       _fetchPopularMoviesPage(pageKey);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    double screenWidth = MediaQuery.of(context).size.width;
+    Logger().f("Device width is: $screenWidth");
+    super.didChangeDependencies();
   }
 
   Future<void> _fetchPopularMoviesPage(int pageKey) async {
@@ -70,98 +80,124 @@ class _PopularMoviesPageState extends ConsumerState<MoviesPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isSmallPhone = screenWidth >= 320 && screenWidth < 371;
+    bool isNormalPhone = screenWidth >= 371 && screenWidth < 431;
+    bool isBigPhone = screenWidth >= 431 && screenWidth < 502;
+    // bool isSmallTablet = screenWidth >= 502 && screenWidth < 562;
+    bool isTablet = screenWidth >= 500 && screenWidth < 640;
     return Scaffold(
-      appBar: _buildAppSearchBar(),
-      body: _buildPopularMoviesGrid(),
-    );
+        appBar: _buildAppSearchBar(),
+        body: _buildPopularMoviesGrid(
+            isSmallPhone, isNormalPhone, isBigPhone, isTablet));
   }
 
-  Widget _buildPopularMoviesGrid() {
+  Widget _buildPopularMoviesGrid(
+      bool isSmallPhone, bool isNormalPhone, bool isBigPhone, bool isTablet) {
     return PagedGridView<int, Movie>(
       pagingController: _popularMoviesPagingController,
       builderDelegate: PagedChildBuilderDelegate<Movie>(
-        itemBuilder: (context, movie, index) => _buildPopularMoviesCard(movie),
-        firstPageErrorIndicatorBuilder: (context) => const Center(
-          child: Text(
-            'Error loading popular movies.',
-            style: TextStyle(color: Colors.red),
-          ),
-        ),
+        itemBuilder: (context, movie, index) => _buildPopularMoviesCard(
+            movie, isSmallPhone, isNormalPhone, isBigPhone, isTablet),
+        firstPageErrorIndicatorBuilder: (context) =>
+            ErrorIndicator(errMsg: errorMsg, onRetry: () {}),
         noItemsFoundIndicatorBuilder: (context) => const Center(
           child: Text('No popular movies found.'),
         ),
       ),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.54,
-      ),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: isSmallPhone
+              ? 0.51
+              : isNormalPhone
+                  ? 0.528
+                  : isBigPhone
+                      ? 0.545
+                      : 0.585),
     );
   }
 
-  Widget _buildPopularMoviesCard(Movie movie) {
+  Widget _buildPopularMoviesCard(Movie movie, bool isSmallPhone,
+      bool isNormalPhone, bool isBigPhone, bool isTablet) {
     return InkWell(
       onTap: () {
         navigateToDetailScreen(movie.id);
       },
       child: Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  height: MediaQuery.of(context).size.height * 0.379,
-                  imageUrl: getPosterUrl(movie.posterPath ?? ""),
-                  errorWidget: (context, url, error) => const Center(
-                    child: Icon(Icons.error),
-                  ),
-                ),
-                Positioned(
-                  top: 10,
-                  right: 0,
-                  child: IconButton(
-                    color: Colors.transparent,
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.more_vert,
-                      color: Colors.grey,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  CachedNetworkImage(
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    imageUrl: getPosterUrl(movie.posterPath ?? ""),
+                    progressIndicatorBuilder: (context, url, progress) {
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 120),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    },
+                    errorWidget: (context, url, error) => const Padding(
+                      padding: EdgeInsets.only(top: 120),
+                      child: Center(
+                        child: Icon(Icons.error),
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  left: 10,
-                  bottom: 0,
-                  child: _buildVoteAverageContainer(movie.voteAverage ?? 0),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 8,
-                left: 10,
-                right: 10,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    movie.title ?? "-",
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  Positioned(
+                    top: 10,
+                    right: 0,
+                    child: IconButton(
+                      color: Colors.transparent,
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.more_vert,
+                        color: Colors.grey,
+                      ),
+                    ),
                   ),
-                  Text(
-                    movie.releaseDate != null && movie.releaseDate!.isNotEmpty
-                        ? formatReleaseDate(movie.releaseDate!)
-                        : "---",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  Positioned(
+                    left: 10,
+                    bottom: 0,
+                    child: _buildVoteAverageContainer(movie.voteAverage ?? 0),
                   ),
                 ],
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 8,
+                  left: 10,
+                  right: 10,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      movie.title ?? "-",
+                      maxLines: isSmallPhone ? 1 : 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    Text(
+                      movie.releaseDate != null && movie.releaseDate!.isNotEmpty
+                          ? formatReleaseDate(movie.releaseDate!)
+                          : "---",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
