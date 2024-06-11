@@ -1,6 +1,6 @@
 # MMB - Movie Mania Browser
 
-MMB (Movie Mania Browser) is a Flutter application designed to fetch and display a list of popular movies using the TMDB (The Movie Database) API. It provides users with an engaging experience to discover, search, and manage their favorite movies. Users can add movies to their watchlist, view detailed information, and watch trailers, all within a robust and scalable app built with clean architecture principles.
+MMB (Movie Mania Browser) is a Flutter application designed to fetch and display a list of popular movies using the TMDB (The Movie Database) API. It provides users with an engaging experience to discover, search, and manage their favorite movies. Users can add movies to their watchlist, view detailed information, and watch trailers, all within a robust and scalable app built with clean architecture principles..
 
 ## Features
 
