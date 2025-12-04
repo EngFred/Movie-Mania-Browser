@@ -1,4 +1,4 @@
-# MMB - Movie Mania Browser 🎬
+# MMB - Movie Mania Browser
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.0%2B-02569B?logo=flutter)
 ![Dart](https://img.shields.io/badge/Dart-3.0%2B-0175C2?logo=dart)
@@ -12,7 +12,7 @@ This project demonstrates modern Android/iOS development practices, including se
 
 ---
 
-## 📱 App Screenshots
+## App Screenshots
 
 <p align="center">
   <img src="https://github.com/EngFred/Movie-Mania-Browser/assets/136785545/9f174e28-bda4-42da-ad94-f61b450c9327" alt="MMB App Screenshots" width="100%">
@@ -20,17 +20,17 @@ This project demonstrates modern Android/iOS development practices, including se
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-- **🚀 Popular Movies:** Fetches and displays a curated list of popular movies from the TMDB API with seamless infinite scrolling (pagination).
-- **🔍 Smart Search:** Instantly find specific movies by title or keyword.
-- **💾 Persistent Watchlist:** Users can save movies to a local watchlist using **Floor** database, allowing access to favorites even when offline.
-- **🎞️ Rich Media:** View high-resolution posters, synopses, cast details, and watch trailers directly within the app.
-- **🎨 Responsive Design:** A polished UI that adapts to different screen sizes.
+- **Popular Movies:** Fetches and displays a curated list of popular movies from the TMDB API with seamless infinite scrolling (pagination).
+- **Smart Search:** Instantly find specific movies by title or keyword.
+- **Persistent Watchlist:** Users can save movies to a local watchlist using **Floor** database, allowing access to favorites even when offline.
+- **Rich Media:** View high-resolution posters, synopses, cast details, and watch trailers directly within the app.
+- **Responsive Design:** A polished UI that adapts to different screen sizes.
 
 ---
 
-## 🛠️ Architecture
+## Architecture
 
 MMB is built using the **Clean Architecture** pattern to ensure the codebase remains testable, maintainable, and scalable. The app is divided into three distinct layers:
 
@@ -51,7 +51,7 @@ MMB is built using the **Clean Architecture** pattern to ensure the codebase rem
 
 ---
 
-## 🧰 Technologies & Libraries
+## Technologies & Libraries
 
 | Category | Technology | Description |
 | :--- | :--- | :--- |
@@ -64,7 +64,7 @@ MMB is built using the **Clean Architecture** pattern to ensure the codebase rem
 
 ---
 
-## 🚀 Setup and Installation
+## Setup and Installation
 
 To get a local copy up and running, follow these simple steps.
 
