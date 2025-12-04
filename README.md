@@ -70,7 +70,7 @@ To get a local copy up and running, follow these simple steps.
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/EngFred/mmb.git](https://github.com/EngFred/mmb.git)
+git clone https://github.com/EngFred/Movie-Mania-Browser
 cd mmb
 ```
 
